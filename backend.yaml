@@ -1,0 +1,33 @@
+apiVersion: apps/vl
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  selector:
+    matchLabels:
+      app: backend-pod
+      appname: bhw
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: backend-pod
+        appname: bhw
+    spec:
+      containers:
+      - image: mysql:8.0.31
+        name: mysql
+        envFrom:
+        - secretRef:
+            name: backend
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
